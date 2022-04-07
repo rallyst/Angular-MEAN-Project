@@ -1,7 +1,18 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
+const Post = require('./models/post');
+// 64rfcU0zjx7C2uFl
 const app = express();
+
+mongoose.connect('mongodb://rallyshop:64rfcU0zjx7C2uFl@cluster0-shard-00-00.34aw4.mongodb.net:27017,cluster0-shard-00-01.34aw4.mongodb.net:27017,cluster0-shard-00-02.34aw4.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-m04609-shard-0&authSource=admin&retryWrites=true&w=majority')
+  .then(() => {
+    console.log('Connected to database!')
+  })
+  // .catch(() => {
+  //   console.log('Connection failed!')
+  // })
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -19,8 +30,11 @@ app.use((req, res, next) => {
 });
 
 app.post('/api/posts', (req, res, next) => {
-  const post = req.body;
-  console.log();
+  const post = new Post({
+    title: req.body.title,
+    content: req.body.content
+  });
+  console.log(post);
   res.status(201).json({
     message: 'Post added successufully'
   });
