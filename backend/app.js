@@ -10,7 +10,7 @@ const app = express();
 
 mongoose
   .connect(
-    'mongodb://rallyshop:64rfcU0zjx7C2uFl@cluster0-shard-00-00.34aw4.mongodb.net:27017,cluster0-shard-00-01.34aw4.mongodb.net:27017,cluster0-shard-00-02.34aw4.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-m04609-shard-0&authSource=admin&retryWrites=true&w=majority'
+    'mongodb://rallyshop:64rfcU0zjx7C2uFl@cluster0-shard-00-00.34aw4.mongodb.net:27017,cluster0-shard-00-01.34aw4.mongodb.net:27017,cluster0-shard-00-02.34aw4.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-m04609-shard-0&authSource=admin&w=majority'
   )
   .then(() => {
     console.log('Connected to database!');
