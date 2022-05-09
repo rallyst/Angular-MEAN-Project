@@ -9,16 +9,16 @@ import { Post } from './post.model';
 @Injectable({ providedIn: 'root' })
 export class PostsService {
   private posts: Post[] = [];
-  private postsUpdated = new Subject<{ posts: Post[], postCount: number }>();
+  private postsUpdated = new Subject<{ posts: Post[]; postCount: number }>();
 
-  constructor(
-    private http: HttpClient,
-    private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   getPosts(postPerPage: number, currentPage: number) {
     const queryParams = `?pagesize=${postPerPage}&page=${currentPage}`
     this.http
-      .get<{ message: string, posts: any, maxPosts: number }>('http://localhost:3000/api/posts' + queryParams)
+      .get<{ message: string, posts: any, maxPosts: number }>(
+        'http://localhost:3000/api/posts' + queryParams
+      )
       .pipe(
         map(postData => {
           return {
@@ -27,7 +27,8 @@ export class PostsService {
                 title: post.title,
                 content: post.content,
                 id: post._id,
-                imagePath: post.imagePath
+                imagePath: post.imagePath,
+                creator: post.creator
               };
             }),
             maxPosts: postData.maxPosts
@@ -48,12 +49,14 @@ export class PostsService {
   }
 
   getPost(id: string) {
-    // return { ...this.posts.find(p => p.id === id) };
-    return this.http.get<{ _id: string, title: string, content: string, imagePath: string }>(
-      "http://localhost:3000/api/posts/" + id
-    );
+    return this.http.get<{
+      _id: string;
+      title: string;
+      content: string;
+      imagePath: string;
+      creator: string;
+    }>("http://localhost:3000/api/posts/" + id);
   }
-
 
   addPost(title: string, content: string, image: File) {
     const postData = new FormData();
@@ -62,18 +65,10 @@ export class PostsService {
     postData.append('image', image, title)
     this.http
       .post<{ message: string, post: Post }>(
-        'http://localhost:3000/api/posts', postData
+        'http://localhost:3000/api/posts',
+        postData
       )
       .subscribe((responseData) => {
-        // const post: Post = {
-        //   id: responseData.post.id,
-        //   title: title,
-        //   content: content,
-        //   imagePath: responseData.post.imagePath
-        // };
-
-        // this.posts.push(post);
-        // this.postsUpdated.next([...this.posts]);
         this.router.navigate(['/']);
       });
   }
@@ -91,33 +86,18 @@ export class PostsService {
         id: id,
         title: title,
         content: content,
-        imagePath: image
+        imagePath: image,
+        creator: null
       };
     }
-    this.http.put('http://localhost:3000/api/posts/' + id, postData)
+    this.http
+      .put('http://localhost:3000/api/posts/' + id, postData)
       .subscribe(response => {
-        // const updatedPosts = [...this.posts];
-        // const oldPostIndex = updatedPosts.findIndex(p => p.id === id);
-        // const post: Post = {
-        //   id: id,
-        //   title: title,
-        //   content: content,
-        //   imagePath: ''
-        // }
-        // updatedPosts[oldPostIndex] = post;
-        // this.posts = updatedPosts;
-        // this.postsUpdated.next([...this.posts]);
         this.router.navigate(['/']);
       });
   }
 
   deletePost(postId: string) {
-    return this.http
-      .delete('http://localhost:3000/api/posts/' + postId);
-    // .subscribe(() => {
-    //   const updatedPosts = this.posts.filter(post => post.id !== postId);
-    //   this.posts = updatedPosts;
-    //   this.postsUpdated.next([...this.posts]);
-    // });
+    return this.http.delete('http://localhost:3000/api/posts/' + postId);
   }
 }
